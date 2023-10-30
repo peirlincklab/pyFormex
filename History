@@ -1,0 +1,90 @@
+#
+##
+##  SPDX-FileCopyrightText: © 2007-2021 Benedict Verhegghe <bverheg@gmail.com>
+##  SPDX-License-Identifier: GPL-3.0-or-later
+##
+##  This file is part of pyFormex.
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: https://pyformex.org
+##  Project page: https://savannah.nongnu.org/projects/pyformex/
+##  Development: https://gitlab.com/bverheg/pyformex
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+
+
+2019-06 BV: Removed support for Python 2.7 from the master branch.
+
+2019-02 BV: Released pyFormex 1.0.5. First official release of the 1.0 branch.
+
+2017-05 BV: Long term alpha release 1.0.4-a2-1
+
+2015-06 BV: Switch master to 1.0 branch with GL2 engine.
+
+2013-10 BV: Released pyFormex 0.9.1. The last release with the GL1 engine.
+	    Development of GL2 engine ongoing.
+
+2013-03 BV: Released pyFormex 0.9.0
+
+2012-11 BV: Released pyFormex 0.8.9
+
+2011-12 BV: Released pyFormex 0.8.5
+
+2009-06 BV: Released pyFormex 0.8
+
+2008-04 BV: Released pyFormex 0.7
+
+2008-02 BV: Started the pyFormex User Meeting
+
+2007-11 BV: Released pyFormex 0.6
+
+2007-08 BV: Released pyFormex 0.5, a major step towards a multifunctional
+            program.
+
+2007-02 BV: Released pyFormex 0.4.2, including lots of work on surface
+            models.
+
+2006-11-03 BV: Released pyFormex 0.4. This release is marked by the transition
+               to the Qt4 widget set.
+
+2006-04-15 BV: Released pyFormex 0.3
+
+2006: pyFormex was used in some of our research projects and proved to be
+      a valuable tool. This necessitated and inspired new development work
+      on pyFormex. Lots of new features were implemented, too many to be
+      listed here.
+      Some of the milestones:
+      - pyFormex was used in the design of wire stents (see WireStent example).
+        The process involved the automatic creation of Finite Element
+        Analysis jobs and automatic processing of the results.
+      - pyFormex was used to measure geometries obtained from medical images
+        and to create a patient specific geometrical hardware model. This
+        initiated our further work with surface models.
+      - pyFormex was used by civil engineering students for their projects
+        in designing shell structures. Some of these will be included as
+        examples in future releases.
+
+
+2005-12-09 BV : First anniversary release 0.2.2
+2005-04-23 BV : Interim 0.2.1 release with lots of new stuff
+2005-01-03 BV : First public release on berlios.de (0.2)
+2004-12-09 BV : Registered project pyFormex on berlios.de
+2004-07-08 BV : Created a first release (0.1.1)
+2004-07-02 BV : Created a Subversion repository
+2004-06-29 BV :	After reading about Formian, I quickly hacked together
+                the Formex class
+
+# End

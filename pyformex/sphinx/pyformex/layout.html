@@ -1,0 +1,117 @@
+{# #}
+{% extends "basic/layout.html" %}
+
+{# Add copyright notice in all produced .html documents #}
+{%- block htmltitle -%}
+<!--
+##
+##  This file is part of the pyFormex project.
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: http://pyformex.org
+##  Project page:  http://savannah.nongnu.org/projects/pyformex/
+##  Copyright (C) Benedict Verhegghe (benedict.verhegghe@ugent.be)
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+-->
+{%- if title == 'pyFormex Home' %}
+    <title>{{ title }}</title>
+{% else %}
+    <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
+{% endif %}
+{%- endblock %}
+
+
+{%- block extrahead %}
+<link rel="icon" type="image/png" href="{{ pathto('_static/pyformex_fav.png',1) }}" />
+{% endblock %}
+
+{%- macro myrelbar() %}
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>{{ _('Navigation') }}</h3>
+      <ul>
+        {%- for rellink in rellinks %}
+        <li class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+          <a href="{{ pathto(rellink[0])|e }}" title="{{ rellink[1]|striptags|e }}"
+             {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
+          {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
+        {%- endfor %}
+        {%- block rootrellink %}
+        <li class="nav-item nav-item-0"><a href="{{ pathto(master_doc)|e }}">{{ shorttitle|e }}</a>{{ reldelim1 }}</li>
+        {%- endblock %}
+        {%- for parent in parents %}
+          <li class="nav-item nav-item-{{ loop.index }}"><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
+        {%- endfor %}
+        <!--li class="nav-item nav-item-this"><a href="{{ link|e }}">{{ title }}</a></li-->
+        {%- block relbaritems %} {% endblock %}
+      </ul>
+    </div>
+{%- endmacro %}
+
+
+{%- block relbar1 %}{{ myrelbar() }}{% endblock %}
+
+{%- block relbar2 %}{{ myrelbar() }}{% endblock %}
+
+{# Add a header with pyFormex logo #}
+{%- block header %}
+{#    {{ super() }} #}
+<div class="header">
+  <a href="http://pyformex.org">
+  <img src="{{ pathto('_static/scallop_dome_small.png',1) }}" alt="scallop dome" border="0" hspace="20" vspace="12" align="left" />
+  <img src="{{ pathto('_static/pyformex-logo-2.png',1) }}" alt="pyformex logo" border="0" hspace="10" vspace="8" align="left" />
+  </a>
+</div>
+{% endblock %}
+
+
+{% block sidebarlogo %}
+<!-- PYFORMEX_SIDEBAR_LOGO -->
+<!-- PYFORMEX_WEBSITE_SIDEBAR_TOP -->
+{% endblock %}
+{# The sidebar rendered before the body #}
+{% block sidebar1 %}
+{{ sidebar() }}
+{% endblock %}
+{# The sidebar rendered after the body #}
+{% block sidebar2 %}
+{% endblock %}
+
+{# Use single angle bracket for related bar item separation #}
+{% set reldelim1 = ' &gt;' %}
+
+{%- block footer %}
+    <div class="footer">
+    <span class="left">
+    {%- if show_copyright %}
+      {%- if hasdoc('copyright') %}
+        {% trans path=pathto('copyright'), copyright=copyright|e %}&copy; <a href="{{ path }}">Copyright</a> {{ copyright }}.{% endtrans %}
+      {%- else %}
+        {% trans copyright=copyright|e %}&copy; Copyright {{ copyright }}.{% endtrans %}
+      {%- endif %}
+    {%- endif %}
+    </span>
+    {%- if last_updated %}
+      {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
+    {%- endif %}
+    <span class="right">
+    {%- if show_sphinx %}
+      {% trans sphinx_version=sphinx_version|e %}Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+    {%- endif %}
+    </span>
+    </div>
+{%- endblock %}

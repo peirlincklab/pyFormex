@@ -1,0 +1,78 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# debian/rules  for pyFormex, using debhelper.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+export DH_OPTIONS
+
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+DEB_BUILD_MAINT_OPTIONS=noddebs
+
+export PYBUILD_INSTALL_ARGS=--install-lib=/usr/share/packagename/ --install-scripts=/usr/share/packagename/
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+build:
+	@echo "=== Building ==="
+	#dh_auto_build
+	make build
+	@echo "=== Building extra ==="
+	CFLAGS='-O2 -g -Wall' make -C $(CURDIR)/pyformex/extra
+
+binary:
+	@echo "=== Installing ==="
+	dh binary --with python3 --buildsystem=pybuild
+	@echo "=== Installing extra ==="
+	#DESTDIR=$(CURDIR)/debian/tmp make -C $(CURDIR)/pyformex/extra prefix=/usr install
+
+
+binary-arch:
+	dh_numpy
+	dh_python3
+	dh binary-arch -a --with=python3 --buildsystem=pybuild
+
+
+# override_dh_auto_install:
+# 	dh_auto_install
+# 	# Move architecture independent files to /usr/share
+# 	set -e; for py in $(shell pyversions -s); do \
+# 		rm -rf $(CURDIR)/debian/tmp/usr/share/pyformex; \
+# 		rm -rf $(CURDIR)/debian/tmp/usr/share/doc/pyformex; \
+# 		install -d $(CURDIR)/debian/tmp/usr/share/pyformex; \
+# 		install -d $(CURDIR)/debian/tmp/usr/share/doc/pyformex; \
+# 		mv $(CURDIR)/debian/tmp/usr/lib/$$py/dist-packages/pyformex/icons $(CURDIR)/debian/tmp/usr/share/pyformex; \
+# 		mv $(CURDIR)/debian/tmp/usr/lib/$$py/dist-packages/pyformex/data $(CURDIR)/debian/tmp/usr/share/pyformex; \
+# 		mv $(CURDIR)/debian/tmp/usr/lib/$$py/dist-packages/pyformex/doc/* $(CURDIR)/debian/tmp/usr/share/doc/pyformex; \
+# 		done
+
+# 	DESTDIR=$(CURDIR)/debian/tmp make -C $(CURDIR)/pyformex/extra install prefix=/usr
+
+
+override_dh_install:
+	dh_install -i --exclude=".so"
+	dh_install -a
+
+
+override_dh_python3:
+	dh_numpy
+	dh_python3
+	# # Link architecture independent files to keep pyformex happy
+	# set -e; if [ -d "debian/pyformex" ]; then \
+	# 	for py in $(shell pyversions -s); do \
+	# 		ln -sf /usr/share/doc/pyformex $(CURDIR)/debian/pyformex/usr/lib/$$py/dist-packages/pyformex/doc; \
+	# 		ln -sf /usr/share/pyformex/data $(CURDIR)/debian/pyformex/usr/lib/$$py/dist-packages/pyformex/data; \
+	# 		ln -sf /usr/share/pyformex/icons $(CURDIR)/debian/pyformex/usr/lib/$$py/dist-packages/pyformex/icons; \
+	# 	done; fi
+
+	# # Replace embedded Javascript libraries with symlinks
+	# set -e; if [ -d "debian/pyformex" ]; then \
+	# 	for FILENAME in jquery underscore; do \
+	# 	find $(CURDIR)/debian/pyformex -name $$FILENAME.js -print \
+        #         -exec ln -sf /usr/share/javascript/$$FILENAME/$$FILENAME.js {} \; ;\
+	# 	done; fi
+
+
+# End

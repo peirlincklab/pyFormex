@@ -1,0 +1,105 @@
+#!/bin/bash
+##
+##  SPDX-FileCopyrightText: © 2007-2023 Benedict Verhegghe <bverheg@gmail.com>
+##  SPDX-License-Identifier: GPL-3.0-or-later
+##
+##  This file is part of pyFormex 3.3  (Sun Mar 26 20:16:15 CEST 2023)
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: https://pyformex.org
+##  Project page: https://savannah.nongnu.org/projects/pyformex/
+##  Development: https://gitlab.com/bverheg/pyformex
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+
+#
+# pyFormex startup script
+#
+
+usage() {
+    cat<<EOF
+
+Usage: $(basename $0) [-D] [PYFORMEX OPTIONS]
+
+Options:
+
+D: switch on debugging info for this script
+
+EOF
+}
+
+################################
+# Process command line arguments
+#
+
+ECHO=":"   # do nothing command (implements -D option)
+PYTHON=${PYTHON:-python3}     # Python interpreter to use
+PYOPTS=    # Python interpreter options
+while [ "${1::1}" = "-" ]; do
+    case $1 in
+	-- ) shift; break ;;
+	--* | -h | -c | -m ) break ;;
+	-D ) ECHO="echo" ;;
+	* ) PYOPTS="$PYOPTS $1" ;;
+    esac
+    shift
+done
+
+script=$(readlink -f $0)
+scriptdir=$(dirname $script)
+PYVER=$($PYTHON -V | sed 's/.* //')
+
+$ECHO "Script: $0"
+$ECHO "Pid: $$"
+$ECHO "Cmd: $(cat /proc/$$/cmdline | tr '\000' ' ')"
+$ECHO "pyFormex start script: $script"
+$ECHO "Python interpreter: $PYTHON"
+$ECHO "Python version: $PYVER"
+$ECHO "Python options: $PYOPTS"
+$ECHO "pyFormex args: $@"
+
+# Lowest Python version accepting syntax
+REQVER=3.8
+# Find the lowest of two version strings in dotted format
+LOWEST=$(printf "$PYVER\n$REQVER\n" | sort -V | head -n 1)
+$ECHO "Minimal Python version: $LOWEST"
+if [ "$LOWEST" = "$PYVER" ]; then
+    # Python3 version too old
+    echo "Alas, your version of Python is $PYVER."
+    echo "However, pyFormex requires Python $REQVER or higher."
+    echo "Please install a newer Python version to continue."
+    exit 1
+fi
+
+if [ -f "$scriptdir/__main__.py" ]; then
+    $ECHO "Running from source tree (development mode)"
+    set exec $PYTHON $PYOPTS $scriptdir/__main__.py "$script" "$@"
+elif [ -f "pyformex/__init__.py" ]; then
+    $ECHO "Invalid installation type. Try to run the command from"
+    $ECHO "another directory."
+    exit 1
+else
+    $ECHO "Running from an installation"
+    set exec $PYTHON $PYOPTS -s -m pyformex "$script" "$@"
+fi
+if [ "$ECHO" = "echo" ]; then
+    printf 'Executing command:\n'
+    printf '"%b" ' "$@"
+    printf '\n'
+fi
+"$@"
+
+# End

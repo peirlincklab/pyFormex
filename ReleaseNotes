@@ -1,0 +1,263 @@
+..   -*- rst -*-
+  
+..
+  SPDX-FileCopyrightText: © 2007-2023 Benedict Verhegghe <bverheg@gmail.com>
+  SPDX-License-Identifier: GPL-3.0-or-later
+  
+  This file is part of pyFormex 3.3  (Sun Mar 26 20:16:15 CEST 2023)
+  pyFormex is a tool for generating, manipulating and transforming 3D
+  geometrical models by sequences of mathematical operations.
+  Home page: https://pyformex.org
+  Project page: https://savannah.nongnu.org/projects/pyformex/
+  Development: https://gitlab.com/bverheg/pyformex
+  Distributed under the GNU General Public License version 3 or later.
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see http://www.gnu.org/licenses/.
+  
+  
+.. note:: As of pyFormex 3.3, the minimal Python version is 3.8.
+
+
+pyFormex-3.3 Releasenotes
+=========================
+- NEW PyConsole, combining the message board and console in one, gives
+  access to full pyFormex machinery, keeps history of entered commands,
+  allows autocompletion, colored output, easy indent
+- GUI improvements:
+  -gui.draw.frontview: easily selects screen setup with y or z axis upwards
+  -gui.draw.TempPalette allows temporary switching to nondefault palette
+  -linking scenes in multiple viewports (illustrated in FourView example)
+  -Camera locking can be done separately for direction and zooming
+  -Camera.coordsys returns a CoordSys aligned along camera axes
+- Image save allows saving a rectanglular area from the viewport
+- NEW picking tool (operating with off-screen rendering) allows to pick
+  only items in front of the rendering. The old picking tool (only seeing
+  disconnected points) is also retained, but the new one is made the default.
+  Picking functionality has been greatly improved and simplified and allow
+  for easy continuous picking modes.
+- New Pick and Query button menus in the toolbar allow faster access
+- New LABELing functionality in tools.py: classes Label, Labels and functions
+  lablePoints, labelPoints2D allow to interactively add/edit/remove labels
+  to existing points or newly created points on a surface or a plane.
+  mergedSurface creates a single merged surface from all current actors.
+  These new tools even replace the query 2D functions.
+- Tools menu has been completely revised and provides interactive configuring
+  of the labeling/querying tools.
+- nurbs.py: new interpolation curves and curve fitting functions,
+  -cubicInterpolate: local interpolation strategy of degree 3.
+  -quadraticInterpolate: local interpolation strategy of degree 3.
+  -cubicSpline: traditional cubic spline with end tangents
+  -globalInterpolationCurve: global interpolation strategy with or
+   without tangents at all points or ends
+  -lsqCurve fits an approximate curve to data points
+  -optLsqCurve: fits an approximate curve to data points with required
+   accuracy
+  -NurbsCurve: can be called as a function and returns the point(s)
+   at the provided parameter(s); projectPoint also returns the distance
+   to the foot point; new projectPoints, distancePoints (convenience to
+   project multiple points)
+- Coords: new spiral transform to create spirals and helices, new dimensions
+  method to get overall shape of the point cloud
+- Mesh, Formex: report methods now work similar
+- simple.py: grid1 creates a regular 1D grid of points
+- arraytools.py: new quadraticEquation function returns both roots and type
+- configurable defaults for precision in float array outputs
+- pyformex command line: allow some Python interpreter options to be passed
+- importing the lazy module is deprecated. The new core.py module
+  is recommended to import everything.
+- removed dependency on Python distutils
+- AND a really long list of bug fixes and minpr improvements
+
+
+pyFormex 3.2 Releasenotes
+=========================
+- curve.py: major cleanup and improvements, moved to core pyformex directory;
+  improved printing of all Curve classes;
+  PolyLine: is now subclassed from BezierSpline; new method extend;
+  improved avgDirections;
+  BezierSpline: much improved interpolation; 2nd degree planar curves are
+  now smooth; new methods points and part_points; improved sub_points,
+  sub_directions and sub_curvature;
+  CardinalSpline, CardinalSpline2, Arc3 removed; improved Arc;
+  new functions deCasteljau and splitBezier;
+- Mesh: improved methods lengths, areas, length, area;
+  report now includes length and area when possible
+- quad4 Mesh: add functionality to fix improperly defined elements
+- coords.py: Coords: now has a rosette method (like Formex);
+  new function fpattern creates points like Formex 'l:...' string
+- TextArray, drawMarks, drawNumbers allow drawing texts with multiple colors;
+  gravity can be specified in lower or upper case
+- tools menu: new/improved functions createPoints, labelPoints, mergedSurface,
+  drawPointLabels
+- path: new methods iterdir, readlines, writelines;
+  dirs() and files() return now Path strings;
+  improved methods scandir, list, dirnames, filenames, walk, listTree;
+  removed method allFiles
+- Geometry menu: allows reading multiple files at once
+- vtk_itf: add output of vtu type
+- nurbs.py: some improved and new functionality, though this is work in
+  progress: expect more in next release
+- arraytools.interleave: allow to interleave multiple arrays
+- GUI: MessageBoard.write is improved
+- library modules and their emulation are now also documented
+- many other improvements and and a whole bunch of bug fixes
+
+
+pyFormex 3.1 Releasenotes
+=========================
+- New PZF file format to efficiently store almost anything. It is a ZIP
+  file format, and thus can be handled with may other tools as well.
+- plugins.http_server provides a local HttpServer and a showHtml function
+  to display local files in a browser over the http: protocol, thus
+  avoiding the file: protocol which may raise CORS errors
+- utils.showHtml replaces utils.showHTML
+- improved reading of INP format files (SPRINGSA/DASHPOTA elements)
+- draw() now allows drawing objects in a dict
+- drawing a Camera object will set the camera accordingly
+- new Polygons class to store polygons with variable plexitude
+- new and improved functions in arraytools: where_1d, where_nd,
+  growAxis, cumsum0, renumberIndex
+- new Varray methods: rowslice, roll, index2d, fromArrays
+- Varray.width now returns minimum and maximum width
+- drawNumbers has a fuse option to draw multiple values at same position
+- utils.memoize decorator to automatically save computed values
+- 'polygon' element type
+- faster drawing of elements with plexitude > 3
+- many minor improvements and bug fixes
+
+pyFormex 3.0 Releasenotes
+=========================
+- default OS target is now Debian 11 (bullseye): Python 3.9,
+  numpy 1.19, pyside2 5.15, sphinx 3.4
+- minimal versions: Python 3.7, NumPy 1.16, PySide2 5.11, Sphinx 1.7
+- pyqt5 can now be used as alternate Qt5 bindings
+- support for vtk5, vtk6 and vmtk has been removed. vtk7 supported.
+- new installation procedure (install.sh) allows for installation in
+  user space or as root and multiple installed versions
+- allow the use of non-system Python versions
+- multi.multitask now works with external commands and in script mode
+- generic readGeometry and writeGeometry to read/write from/to a multitude
+  of file formats
+- TriSurface.read reads more formats and splits polygons into triangles
+- TriSurface.remesh is a new internal surface remeshing tool
+- TriSurface.write method allows writing .PLY format
+- TriSurface.nodalWeights: new method returning area weights of the nodes
+- other improved TriSurface methods: inertia, curvature, edgeAngles,
+  featureEdges, distanceOfPoints, avgVertexNormals
+- changes to geomtools: new functions polygonVectorPairs, polygonAvgNormals;
+  improved methods polygonNormals, faceDistance
+- arraytools.vectorPairAngle now returns angles in degrees
+- utils.Namespace: a SimpleNamespace subclass with dict type access
+- surface_menu: fixed the remesh option; improved statistics option
+- improved simple.sphere
+- improved rendering of smooth averaged normals mode
+- restored the classic color dialog
+- improved documentation for many modules
+- many new doctests have been added
+
+
+pyFormex 2.6 Releasenotes
+=========================
+- new internal Trisurface remesh function based on pyacvd
+- new TriSurface remesh function based on instant_meshes
+- improved gambit NEU support
+- local html documentation is no longer contained in the distribution,
+  but can be built from the Help menu.
+- process.Process class is replaced with process.run function
+- gui.draw.runLongTask runs a background process without waiting and
+  without blocking the GUI.
+- new implementation of elements module. Most elements now support the
+  subdivision
+- support for many more Mesh export/import formats
+- revised Geometry menu
+- use setuptools instead of distutils in setup.py
+- Many functional improvements, bug fixes and documentation enhancements
+
+
+pyFormex 2.5 Releasenotes
+=========================
+- improved Dialogs
+- smart Dialog placement
+- new customizable FileDialog class and subclasses
+- draw supports colors with 4 components (RGBA)
+- add interactive nongui console
+- Varray.__init__ avoids numpy deprecation
+- readPLY can read compressed PLY files
+- writePLY fixed and supports ascii as well as binary
+- export PLY files from geometry menu
+- new arraytools functions: mapArray, resizeAxis, resizeArray
+- fix bugs in Trisurface.write, Trisurface.inside, vertex color mode
+
+
+pyFormex 2.4 Releasenotes
+=========================
+This version fixes an important bug in the 2.2 and 2.3 releases. Users
+of those versions should upgrade. This also adds some interesting
+new features.
+
+- An important bug in TextArray, drawMarks and drawText has been fixed.
+- geomtools has new functions split_polygon and splitPolygon to help in
+  splitting polygons into smaller ones with specfied maximal plexitude
+- The OBJ file reader now reads polygons of any plexitude ans allows splitting
+- A PLY file reader has been added, also allowing splitting of polygons
+- A new, easily customizable FileDialog is available in gui.dialogs
+- Geometry menu allows reading of polygons in .obj and .ply format, and
+  optionally splitting them to quads and triangles
+- Formex.rosette has a default value 360/n for the angle
+
+
+pyFormex 2.3 Releasenotes
+=========================
+With this release all older versions become unsupported.
+All users are urged to upgrade.
+- Some important bug fixes in widgets/dialogs
+- Improvements to widgets/dialogs
+- Add a quality tri3 to quad4 remesher using 'Instant Meshes' external
+
+
+pyFormex 2.2 Releasenotes
+=========================
+These are the most noticeable changes since the 2.1 release:
+- Dialogs have validation of the results before accepting them
+- The gui.widgets module has many improvements. See the module docs
+- InputDialog has a shorter name: Dialog
+- The gui.image module has many improvements. See the module docs
+- image.saveImage is a more powerful replacement for image.save. See docs.
+- image.recordSession has been repaired and greatly improved. See docs
+- drawText has a rotate parameter to allow drawing text under any angle
+- Improved and completed documentation of gui.widgets and gui.image
+
+
+pyFormex 2.1 Releasenotes
+=========================
+These are the most noticeable changes since the 2.0 release:
+- Allow catching temporary results from TriSurface.inside
+- Fix a bug in the gtsinside helper program
+- Add utils.ChDir context manager
+- Change TriSurface.dualMesh
+- New function arraytools.binsum
+- Replace all use of the deprecated numpy.matrix class
+- Fix filewrite for older numpy(1.13) and Python(3.6)
+- Add a script to install dependencies on Debian/Ubuntu
+- Fix incorrect installation instructions
+- Verified installation and testing on Debian 10.5, Ubuntu 18.04 and 20.04
+
+
+pyFormex 2.0 Releasenotes
+=========================
+- Removed support for Python2.x, minimum required Python version is 3.6
+
+
+
+.. End

@@ -1,0 +1,34 @@
+#! /bin/bash
+
+
+TAG=first
+ECHO=
+
+################################
+# Process command line arguments
+#
+# Execute getopt
+ARGS=$(getopt -o "t:nh" -l "tag:,dry-run,help" -n "$(basename $0)" -- "$@")
+
+#Bad arguments
+[ $? -eq 0 ] || { usage; exit 1; }
+
+eval set -- $ARGS
+
+while [ "$1" != "--" ]; do
+    case "$1" in
+	-t|--tag)
+	    TAG="$2"; shift ;;
+	-n|--dry-run)
+	    ECHO=echo ;;
+	-h|--help)
+	    usage; exit;;
+	*) echo "Unknown option: $1" >&2; exit 1 ;;
+   esac
+   shift  # delete "$1"
+done
+shift  # delete the "--"
+
+$ECHO docker run -it --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --env="DISPLAY" --net=host pyformex:$TAG /bin/bash $@
+
+# End

@@ -1,0 +1,26 @@
+pyFormex is a Python framework to create, transform, manipulate and render
+geometrical models of 3D structures by sequences of mathematical
+operations. Unlike traditional CAD systems, pyFormex uses a powerful
+Python based scripting language as the basic user input method, making
+it very well suited for automated and repeated (parametric) design
+procedures. It provides a wide range of operations on surface meshes,
+like STL type triangulated surfaces, and FEA meshes or CFD grids.
+There is also support for NURBS curves and surfaces.
+
+pyFormex is often used to create 3D models from medical scan images,
+or as a pre- and post-processor for FEA programs.
+But it can just as well be used to create some nice 3D renderings.
+The fully open Python scripting allows you to do just about anything,
+including interfacing with many other softwares and extending the program
+to suit your own needs. You are only limited by your own imagination.
+
+In pyFormex, the topology of the elements can be created separately
+from the final geometrical form. Often, topology is created first and
+then mapped onto some real geometry. Through the scripting language,
+the user can define any sequence of transformations, built from provided
+or user defined functions. Since the model is stored as a script,
+building parametric models is a natural thing.
+
+While pyFormex is always under development, its scripting language has
+become fairly stable. Its OpenGL GUI environment allows for displaying,
+manipulating and exporting the generated structures.

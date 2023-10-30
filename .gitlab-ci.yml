@@ -1,0 +1,73 @@
+default:
+  image: debian:11
+
+stages:
+  - test
+  - build
+  - deploy
+
+before_script:
+  - source RELEASE
+  - echo "$RELEASE" > release.txt
+
+test:
+  stage: test
+  script:
+    - bash apt_install_deps
+    - bash run_tests lib import version doctest pytest
+
+test_debian_10:
+  extends: test
+  image: debian:10
+  when: manual
+
+test_ubuntu:
+  extends: test
+  image: ubuntu:20.04
+  when: manual
+
+# test_ubuntu_18:
+#   extends: test
+#   image: ubuntu:18.04
+#   when: manual
+
+# test_mint_19:
+#   extends: test
+#   image: linuxmintd/mint19.3-amd64
+#   when: manual
+
+build:
+  stage: build
+  script:
+    - bash apt_install_deps
+    - source RELEASE
+    - make ci_build PKGDIR=_install
+    - make ci_install PKGDIR=_install
+#    - make ci_test
+  artifacts:
+    paths:
+      - _install/pyformex-$(cat release.txt).tar.gz
+      - _install/pyformex-$(cat release.txt).lst
+    expire_in: 1 week
+
+build_debian_10:
+  extends: build
+  image: debian:10
+  when: manual
+
+pages:
+  stage: deploy
+  script:
+    - sh apt_install_deps
+    - make website-ci
+    - rsync -rt website/_build/html/ public
+    - rsync -rt pyformex/doc/html/ public/doc-$DOCVERSION
+  artifacts:
+    paths:
+      - public
+  only:
+    refs:
+#      - master
+      - schedules
+#    variables:
+#      - $CI_COMMIT_MESSAGE =~ /website/i

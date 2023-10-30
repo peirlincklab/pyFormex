@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# This script is intended for executing tests in the gitlab pipeline
+
+usage() {
+    cat <<EOF
+Usage: run_tests TEST...
+
+Runs the specified sets of pyFormex tests. Available tests:
+
+  version     display Python and pyFormex versions, and pyFormex installation
+  doctest     run the pyFormex doctests
+  pytest      run the pyFormex pytests
+  all         run all of the above
+
+EOF
+}
+
+lib() {
+    make lib3
+}
+
+version() {
+    python3 --version
+    pyformex/pyformex -D --version
+    pyformex/pyformex -D --whereami
+    pyformex/pyformex -D --detect
+}
+
+import() {
+    pwd
+    export PYTHONPATH=$(pwd)
+    python3 test_import.py
+}
+
+# run doctests
+doctest() {
+    pyformex/pyformex --doctest -v0 | tee doctest.out
+    lastline="$(tail -n 1 doctest.out)"
+    pat='^Totals:.*failed=([0-9]+) tests.*FAILED=([0-9]+)/.*$'
+    if [[ "$lastline" =~ $pat ]]; then
+	if [ "${BASH_REMATCH[1]}" -gt 0 -o "${BASH_REMATCH[2]}" -gt 0 ]; then
+	    echo "Too many errors in testing"
+	    exit 1
+	else
+	    echo "Doctests seem OK"
+	fi
+    else
+    	echo "Invalid outcome of doctests"
+    	exit 1
+    fi
+}
+
+installall() {
+    ./install.sh all
+}
+
+# run pytests
+# !! We do not run it from inside pyFormex because that does not
+# catch the DeprecationWarning
+pytest() {
+    mkdir -p test
+    python3 -m pytest || exit 2
+}
+
+
+all() {
+    version
+    doctest
+    pytest
+}
+
+# Execution starts here
+
+[ -n "$1" ] || { usage; exit; }
+
+pwd
+exit
+# Execute the specified tests
+for arg in "$@"; do
+    echo "=== run_tests $arg ==="
+    $arg
+done

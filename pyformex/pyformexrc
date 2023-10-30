@@ -1,0 +1,397 @@
+# This is the default pyFormex config file. DO NOT CHANGE IT!  -*- Python -*-
+##
+##  SPDX-FileCopyrightText: © 2007-2023 Benedict Verhegghe <bverheg@gmail.com>
+##  SPDX-License-Identifier: GPL-3.0-or-later
+##
+##  This file is part of pyFormex 3.3  (Sun Mar 26 20:16:15 CEST 2023)
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: https://pyformex.org
+##  Project page: https://savannah.nongnu.org/projects/pyformex/
+##  Development: https://gitlab.com/bverheg/pyformex
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+
+"""pyformexrc
+
+This is the global configuration file for pyFormex. It should always
+be present in the installation path and never be changed from the
+installed defaults.
+
+Changes should go to /etc/pyformex.conf (for site-wide changes)
+or to ~/.config/pyformex/pyformex.conf (for personal settings).
+If your are missing these files, you can copy (parts of) this file
+as a start.
+Many of these settings can also be changed from the pyFormex GUI, using the
+Settings->Settings Dialog.
+
+Config settings are read from the following files in order:
+this file, /etc/pyformex.conf, ~/.config/pyformex/pyformex.conf.
+The last settings override previous ones.
+
+The config files are read by the :class:`config.Config`.
+This means that the syntax is a subset of Python.
+Note: The 'pyformexdir' variable is already set on entry.
+"""
+
+import os
+
+################# global settings ##############
+# files and directories
+homedir = Path.home()
+workdir = Path('.')
+icondir = pyformexdir / 'icons'
+fontsdir = pyformexdir / 'fonts'
+examplesdir = pyformexdir / 'examples'
+scriptsdir = pyformexdir / 'scripts'
+appsdir = pyformexdir / 'appsdir'       # can not be apps !!!
+datadir = pyformexdir / 'data'
+shaderdir = pyformexdir / 'glsl'
+bindir = pyformexdir / 'bin'
+docdir = pyformexdir / 'doc'
+sphinxdir = pyformexdir / 'sphinx'
+htmldir = docdir / 'html'
+testdir = pyformexdir / 'test'
+tmpdir = workdir
+userconfdir = homedir / '.config' / 'pyformex'
+downloaddir = homedir / 'Downloads'
+siteprefs = Path('/etc/pyformex.conf')
+localprefs = Path('pyformex.conf')
+autorun = userconfdir / 'startup.py'
+scripttemplate = datadir / 'template.py'
+logging = 'logfile'
+logfile = userconfdir / 'pyformex.log'
+curfile = ''
+curproj = ''
+
+# extra paths to append tot sys.path
+syspath = []
+
+# commands
+### THESE MAY BE CHANGED BY THE INSTALLATION PROCEDURE
+editor = os.environ.get('VISUAL', '')
+viewer = 'firefox'   # html viewer
+browser = 'firefox'  # web browser
+fortune = 'fortune -s'  # command to generate a fortune cookie
+
+# scriptdirs is a list of (title,dir) tuples
+# for 'examples', the directory will be filled in automagically
+scriptdirs = [('Examples', ''), ('Scripts', '')]
+appdirs = [('Examples', ''), ('Apps', '')]
+# subdirectories to search for source files (for --search option)
+sourcedirs = ['gui', 'menus', 'plugins', 'apps', 'scripts', 'examples', 'lib', 'opengl']
+# searchdirs are the paths outside pyformex also searched with --search option
+searchdirs = []
+
+autoglobals = True
+showapploaderrors = False
+openlastproj = False
+uselib = True
+# prefered system for creating 2d plots
+plot2d = 'matplotlib'
+
+################# warnings settings ##############
+[warnings]
+nice = True    # Show nicely formatted warnings when possible
+popup = True   # Show warnings in a popup window (in gui version)
+reset = False   # Reset warning filters to Python defaults before loading ours
+# Warnings to be filtered out: a set of tuples (message,module,category,action)
+# category and action are 1 character strings (see utils)
+# module, category and action have defaults
+# Example: filters = {('warn_viewport_switching',)}
+# The message should match the START of the message. Add a $ for full string.
+# Warnings from upstream packages can be filtered out here
+# Beware! continuation characters are required if multiline
+filters = { \
+#    (".*return_index", 'numpy'), \
+}
+
+################# numpy #################
+[numpy]
+printoptions = {'precision': 4, 'suppress': True}
+
+################# fonts settings ##############
+[fonts]
+ignore = ['NotoColorEmoji.ttf']
+
+################# GUI settings ##############
+[gui]
+bindings = 'any'   # allows any binding
+# available (in order of preference): 'pyside2', 'pyqt5'
+
+#geometry = '800x600+0+0'  # main window geometry in X11 style
+size=(800, 600)
+pos=(0, 0)
+splitsize = (450, 150)  # relative heights for central and console
+maximized = False
+fullscreen = False
+boxmargins = (0, 0, 0, 0)    # margins around the central box
+
+fortune = False  # show a fortune cookie on startup
+redirect = 'oe'  # redirect both stdOut and stdErr
+history = []
+scripthistory = []
+apphistory = []
+history_max = 20       # max apps/scripts in history
+
+consolehistfile = userconfdir / 'pyconsole.hist'
+consolehistmax = 1000  # max console lines in history
+
+# icondirs: list of paths to search for icons, first match wins
+icondirs = [icondir/'64x64', icondir]
+# icontypes: list of icon types, first match wins
+icontypes = ['.png', '.xpm', '.gif']
+# splash image
+splash = icondir / 'pyformex-splash.png'
+
+pluginmenus = ['Geometry']
+style = "Plastique"
+fontfamily = "Sans"
+fontsize = 9
+spacing = 2         # defines spacing between items in input dialogs
+exitconfirm = 'smart'  # other options: 'never', 'always'
+dooze = 0.0
+rst2html = True      # rst text is converted to html for nice display
+
+menu = ['File', 'Settings', 'Viewport', 'Camera', 'Actions', 'Globals', 'Help']
+
+prefsmenu = True     # add settings menu menu
+viewportmenu = True  # add viewport menu
+cameramenu = True    # add camera menu
+viewmenu = True      # add views menu
+examplesmenu = True  # add examples menu
+
+camerabar = 'top'     # add camera toolbar to top toolbar space
+modebar = 'top'       # add rendemode toolbar to top toolbar space
+viewbar = 'left'      # add views toolbar to left toolbar space
+
+# Default action buttons for current app
+all_actionbuttons = ['play', 'rerun', 'continue', 'stop', 'edit', 'query', 'pick']
+actionbuttons = ['play', 'rerun', 'continue', 'edit', 'query', 'pick']
+
+wirebutton = True    # add wire button to toolbar
+transbutton = True   # add transparency button to toolbar
+normalsbutton = True  # add normals button to toolbar
+lightbutton = True    # add light button to toolbar
+shrinkbutton = False  # add shrink button to toolbar
+timeoutbutton = False  # add timeout button to toolbar
+timeoutvalue = 2      # timeout after this number of seconds
+coordsbox = False     # add coords display widget to toolbar
+
+frontview = 'xy'       # If 'xy' or 'xz', standard views are set automatically
+# defviews = [('front','view-xr-yu'),('back','view-xl-yu'),\
+#             ('right','view-zl-yu'),('left','view-zr-yu'),\
+#             ('top','view-xr-zd'),('bottom','view-xr-zu'),\
+#             ('iso','view-iso1'),\
+#             ]
+zoomfactor = 1.05      # zooming factor for zoom buttons
+rotfactor = 7.5        # rotation angle for rotation buttons
+panfactor = 0.05       # translation factor for pan buttons
+autozoomfactor = 1.732  # enlargement factor for the autozoom (sqrt(3))
+wheelzoomfactor = -0.25  # enlargement factor for the wheelzoom
+dynazoom = ['area', 'dolly']     # preferred zoom technique ('area', 'dolly', 'lens' or 'none')
+wheelzoom = 'area'    # action performed by the wheel ('area', 'dolly', 'lens')
+
+# Which modifier keys are to be used during picking to
+# - move (pan, rotate, zoom)
+# - set selection
+# - add to selection
+# - remove from selection
+# Available modifier names are 'NONE', 'SHIFT', 'CTRL', 'ALT', 'META'
+mouse_mod_move = ['NONE', 'ALT', 'META']
+mouse_mod_set = 'SHIFT'
+mouse_mod_add = 'NONE'
+mouse_mod_remove = 'CTRL'
+
+# Put buttons at the top in dialogs
+buttonsattop = True
+allow_old_dialog_items = False
+showfocus = True
+#easter_egg = True
+startup_warning = ''
+
+layout = 1
+
+wireframe_mode = 'smart'    # set to 'gl' for old behavior
+
+# FileDialog geometry (position is relative to main window)
+smart_placement = True # Set to False to use always default Qt placement
+saved_geom = {}
+# These paths will be displayed in FileSelector sidebar
+sidebardirs = [ pyformexdir ]
+    # Path.home(), \
+    # pyformexdir, \
+    # datadir, \
+    # examplesdir, \
+    # '/', \
+    # ]
+
+################# OpenGL settings ##############
+[opengl]
+version = '2.0'
+
+################# Default canvas settings ##########################
+# This should only contain the keys that are also in CanvasSettings
+# Other canvas related settings can be added to the [draw] section
+[canvas]
+bgmode = 'solid'        # one of 'solid', 'vert', 'hor', 'full'
+bgcolor = 'grey90'      # background color (single color or list of 2 or 4)
+bgimage = ''            # background image, filename
+fgcolor = 'darkgrey'    # default drawing color
+bkcolor = ''            # if defined, backsides of planes have this color
+slcolor = 'orange'      # highlighting color
+textcolor = 'black'     # default color for text drawing
+colormap = ['darkgrey', 'red', 'green', 'blue', 'cyan', 'magenta', 'yellow', 'white', \
+    'black', 'darkred', 'darkgreen', 'darkblue', 'darkcyan', 'darkmagenta', 'darkyellow', 'lightgrey']
+bkcolormap = colormap
+smooth = False              # smooth shading off
+fill = False                # polygon filling off
+lighting = False            # default lights off
+alphablend = False          # alphablend (transparency) off
+culling = False             # culling off
+avgnormals = False
+transparency = 0.5          # default transparency value
+pointsize = 4.0             # size of points
+linewidth = 1.0             # width of lines
+linestipple = (0, 1)         # line stipple (factor,pattern)
+marksize = 0.4              # size of 3D marks
+marktype = 'sphere'         # type of 3D mark
+wiremode = -1               # which edges to display
+
+
+################# canvasgrid settings ##############
+# Separate section because canvas settings is under stricter control
+[canvasgrid]
+showgrid = False     # show grid by default
+size = 0             # 0 means size of current canvas ! does not resize !
+spacing = 100        # spacing between lines
+linewidth = 1        # line thickness
+color = 'black'      # line color
+twocolor = False     # use two colors alternately
+color2 = 'grey80'    # second line color
+ontop = True         # show the lines above the rendering
+
+################# default draw settings ##############
+[draw]
+rendermode = 'smooth'    # default rendering mode
+numbersontop = True
+wait = 0.0  # time(sec.) to wait between draw operations
+flywait = 0.3  # time(sec.) to wait between subsequent views in auto flying
+localaxes = True     # by default, buttons rotate/pan in local axes
+quadline = ['line3']
+quadsurf = []  # [ 'quad8', 'quad9', 'hex20' ]
+avgnormalsize = '_auto_'
+picksize = (8, 8)  # minimum size of the point pick window
+picktool='pix'     # options are 'pix', 'any', 'all'
+disable_depth_test = False
+
+################# material settings ##############
+[material]
+# The material coefficients define how much of the respective light types
+# is re-emitted (not absorbed) by the material
+# All values are in the range 0..1, except shininess, which is
+# currently 1..100
+# It is good to keep the ambient value to 1.0, and to set ambient
+# by the global ambient lighting (plus light ambient) only
+matte = dict(ambient=1.0, diffuse=0.8, specular=0.2, emission=0.0, shininess=1.0)
+default = dict(ambient=0.6, diffuse=0.4, specular=0.2, emission=0.1, shininess=2.0)
+plastic = dict(ambient=1.0, diffuse=0.9, specular=0.7, emission=0.0, shininess=4.0)
+metal = dict(ambient=1.0, diffuse=0.1, specular=0.9, emission=0.0, shininess=8.0)
+
+################# light settings ##############
+[light]
+# Light sources add extra light above the global ambient light (see [render])
+# pyFormex currently has a maximum of 4 lights.
+# Each light can emit 3 types of light: ambient, diffuse and specular.
+# The values are (RGB) tuples, though a single float may be specified
+# to just give the intensity of a white light source.
+# The light position is (XYZW), though currently all lights are assumed
+# to be at infinite distance (W=0)
+
+light0 = {'enabled': True, 'ambient': 0.2, 'diffuse': 0.6, 'specular': 0.4, 'position': (1., 1., 2.)}
+light1 = {'enabled': True, 'ambient': 0.2, 'diffuse': 0.6, 'specular': 0.2, 'position': (0., 1., 2.)}
+light2 = {'enabled': True, 'ambient': 0.2, 'diffuse': 0.4, 'specular': 0.4, 'position': (1., 0., 1.)}
+light3 = {'enabled': False, 'ambient': 0.2, 'diffuse': 0.8, 'specular': 0.0, 'position': (1., -1., 1.)}
+
+################# render settings ##############
+[render]
+mode = 'wireframe'
+lightmodel = 'ambient and diffuse'  # currently only model supported
+ambient = 0.6     # global ambient lighting: a tuple (RGB) or white intensity
+material = 'default'  # the name of a material defined above
+lights = ['light0', 'light1', 'light2']  # a list of enabled lights
+avgnormaltreshold = 0.5
+line = '2'  # '1' or '2'; if '1', quadratic lines are shown as linear
+surface = '1'  # '1' or '2'; if '1', quadratic surfaces are shown as linear
+volume = True  # if False, volumes are shown as their border surface
+# Experimental features: only use if you know what you are doing
+experimental = False
+alphablend = 'trad'  # One of 'trad', 'mult', 'add', 'sort', 'door'
+textblend = 'oneminus'
+transp_nocull = False
+
+################# help settings ##############
+[help]
+website = "http://pyformex.org"
+webdoc = website+"/doc-3.0"
+
+
+[keys]
+save = 'F2'
+
+
+[surface]
+stlread = '.off'
+
+
+[mail]
+sender = ''
+server = 'localhost'
+
+[jobs]
+hosts = ['localhost']
+host = 'localhost'
+inputdir = '~'
+outputdir = '~'
+cmd_abaqus = 'abaqus job=$F cpus=$C'
+cmd_calculix = 'ccx -i $F'
+abqver = ['6.11', '6.12']
+
+
+[prop]
+matdb = datadir / 'materials.json'
+secdb = datadir / 'sections.json'
+
+
+[webgl]
+script = "http://pyformex.org/_static/fewgl-0.2.js"
+guiscript = "http://pyformex.org/_static/xtk_xdat.gui.js"
+autogui = True
+devel = False
+devpath = pyformexdir / 'opengl'
+logo = 'http://pyformex.org/_images/pyformex_createdby.png'
+logo_link = 'http://pyformex.org'
+avoid_fewgl_read_pgf_bug = True
+
+
+[geometry_menu]
+numbersontop = True
+bbox = 'bbox'
+outline_linewidth = 2
+outline_color = 'red'
+
+
+#End

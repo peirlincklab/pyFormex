@@ -1,0 +1,48 @@
+#!/bin/bash
+##
+##  This file is part of the pyFormex project.
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: http://pyformex.org
+##  Project page:  https://savannah.nongnu.org/projects/pyformex/
+##  Copyright (C) Benedict Verhegghe (benedict.verhegghe@ugent.be) 
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+#
+# Create a pyFormex revision graph
+#
+REVLIST=pyformex-rev.list
+URL=$(svn info | grep 'URL:' | sed 's|.*//||;s|.*@||')
+
+[ "$URL" = "svn.savannah.nongnu.org/pyformex/trunk/stats" ] || {
+    echo "URL: $URL"
+    echo "This script should be executed in the pyformex stats directory"
+    exit
+}
+
+REV=$(svn info | gawk '/Revision:/{print $2}')
+RECREV=$(head -n 1 $REVLIST | sed 's| .*||')
+
+[ "$RECREV" = "$REV" ] || {
+  echo "Creating new revision list: this may take some time"
+  pushd ..
+  svn log | gawk '/^r[0-9]+/{ sub("r","",$1); print $1, $5}' > stats/$REVLIST
+  popd
+}
+
+sed -i "s|Created.*\"|Created $(date +'%Y-%m-%d %H:%M:%S')\"|" pyformex-rev.gnu
+gnuplot pyformex-rev.gnu

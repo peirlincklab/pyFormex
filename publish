@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Publish the website
+#
+
+
+[ -d "www/CVS" ] || {
+    echo "This script is intended for the project manager only!"
+    exit
+}
+cd www
+cvs -qn update > ../update.log  2>../update.out
+cd ..
+
+awk '/^? / { print $2} {}' update.log > update.add
+awk '/^cvs update: warning: / { print substr($4,2,length($4)-2) } {}' update.out > update.delall
+# DO NOT DELETE doc-0.9
+awk '/^doc-0.9/{next} {print}' update.delall > update.del
+# DO NOT DELETE doc-1.0
+awk '/^doc-1.0/{next} {print}' update.delall > update.del
+
+cd www
+for f in $(cat ../update.add); do
+    cvs add $f
+done
+for f in $(cat ../update.del); do
+    if [ "$(dirname $f)" == "doc-0.9" ]; then
+	echo "Not deleting $f"
+    else
+        cvs delete $f
+    fi
+done
+
+#cvs -qn update
+
+#cd ..
+#rm -f update.log update.out update.del update.delall update.add

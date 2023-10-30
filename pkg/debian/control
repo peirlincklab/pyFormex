@@ -1,0 +1,113 @@
+Source: pyformex
+Section: science
+Priority: optional
+Maintainer: Benedict Verhegghe <benedict.verhegghe@ugent.be>
+Build-Depends: debhelper (>= 11~),
+	       dh-python,
+	       python3-setuptools,
+	       python3-all-dev,
+	       python3-numpy (>=1.12),
+	       python3-docutils,
+	       python3-sphinx,
+	       libgl1-mesa-dev,
+	       libgts-dev,
+	       libglib2.0-dev,
+X-Python3-Version: >= 3.6
+Build-Depends-Indep: libjs-jquery, libjs-underscore
+Standards-Version: 3.9.8
+Homepage: http://pyformex.org
+
+
+Package: pyformex
+Architecture: all
+Depends: ${misc:Depends},
+	 ${python3:Depends},
+	 python3 (>= 3.6),
+	 python3-numpy(>=1.12),
+	 python3-pil,
+	 python3-pyside2.qtcore,
+	 python3-pyside2.qtgui,
+	 python3-pyside2.qtwidgets,
+	 python3-pyside2.qtopengl,
+	 python3-opengl,
+	 libgts-0.7-5,
+	 libgts-bin,
+	 admesh,
+	 libglu1-mesa,
+	 libfreetype6,
+	 libjs-jquery,
+	 libjs-underscore
+X-Python3-Version: >= 3.6
+Recommends: pyformex-lib, pyformex-extra, imagemagick, python-dicom,
+ python3-matplotlib, python3-docutils
+Suggests: units, tetgen, python3-sphinx
+Description: program to create 3D geometry from Python scripts
+ pyFormex can be used to generate, transform and manipulate large
+ geometrical models of 3D structures by sequences of mathematical operations.
+ Unlike traditional CAD systems, pyFormex provides a powerful (Python based)
+ scripting language as the basic user input, making it very well suited
+ for automated and repeated (parametric) design procedures.
+ It provides a wide range of operations on meshes, like STL type triangulated
+ surfaces and FEA or CFD grids. Nurbs curves and surfaces are under development.
+ pyFormex is often used to create models from medical scan images, or as a
+ pre- and post-processor for Finite Element analysis programs. But it could
+ just as well be used to just create some nice 3D renderings.
+ .
+ This package contains the architecture independent parts: the Python source
+ (including GUI and examples), some data files and the full documentation.
+ It does not contain:
+  - the compiled acceleration libraries (install pyformex-lib),
+  - the (non-essential) extra programs and modules (see the pyformex/extra
+    directory for instructions.)
+ Installing pyformex-lib is highly recommended for use with large models.
+
+
+Package: pyformex-lib
+Architecture: any
+Depends: pyformex(=${source:Version}),
+	 ${misc:Depends},
+	 ${shlibs:Depends},
+	 ${python3:Depends},
+	 python3 (>= 3.6),
+	 python3-numpy(>=1.12),
+X-Python3-Version: >= 3.6
+Description: program to create 3D geometry from Python scripts (libs)
+ pyFormex can be used to generate, transform and manipulate large
+ geometrical models of 3D structures by sequences of mathematical operations.
+ Unlike traditional CAD systems, pyFormex provides a powerful (Python based)
+ scripting language as the basic user input, making it very well suited
+ for automated and repeated (parametric) design procedures.
+ It provides a wide range of operations on meshes, like STL type triangulated
+ surfaces and FEA or CFD grids. Nurbs curves and surfaces are under development.
+ pyFormex is often used to create models from medical scan images, or as a
+ pre- and post-processor for Finite Element analysis programs. But it could
+ just as well be used to just create some nice 3D renderings.
+ .
+ This package contains the pyFormex acceleration libraries for your
+ architecture. Installing this package will dramatically speed up
+ operations on large 3D models.
+
+
+Package: pyformex-extra
+Architecture: any
+Depends: ${misc:Depends},
+	 ${shlibs:Depends},
+	 libgts-0.7-5,
+	 libgts-bin,
+	 libglib2.0-0,
+X-Python3-Version: >= 3.6
+Description: program to create 3D geometry from Python scripts (extras)
+ pyFormex can be used to generate, transform and manipulate large
+ geometrical models of 3D structures by sequences of mathematical operations.
+ Unlike traditional CAD systems, pyFormex provides a powerful (Python based)
+ scripting language as the basic user input, making it very well suited
+ for automated and repeated (parametric) design procedures.
+ It provides a wide range of operations on meshes, like STL type triangulated
+ surfaces and FEA or CFD grids. Nurbs curves and surfaces are under development.
+ pyFormex is often used to create models from medical scan images, or as a
+ pre- and post-processor for Finite Element analysis programs. But it could
+ just as well be used to just create some nice 3D renderings.
+ .
+ This package contains some extra binaries that give pyFormex extended
+ functionality. Included are gtsinside, gtsrefine, gtsset, gtssmooth,
+ pyformex-postabq, pyformex-dxfparser.

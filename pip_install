@@ -1,0 +1,22 @@
+#!/bin/bash
+# Install python modules via pip
+
+[ -n "$VIRTUAL_ENV" ] || {
+    cat <<EOF
+######################################################################
+This script can only be used from inside a Python virtual environment.
+You need to activate such a virtual environment first.
+######################################################################
+EOF
+    exit 1
+}
+
+pkgs="PyQt5 PyOpenGL pillow numpy pydicom meshio"
+# !! PySide2 5.13 on Python3.10 doesn't work
+# !! scipy doesn't install on Python3.10
+
+for mod in $pkgs; do
+    pip3 install $mod
+done
+
+# End

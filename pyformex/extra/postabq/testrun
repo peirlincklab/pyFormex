@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+make
+./postabq example.fil > example.post.py
+diff example.post example.post.py && echo "Passed the test run"
+
+# End

@@ -1,0 +1,54 @@
+[
+    {
+	"format": "pyfdb 1.0",
+	"creator": "pyFormex 2.5-r1 (release-2.5-120-gedfb5ded1) DEVELOPMENT VERSION",
+	"key": "name",
+	"nrecs": 8
+    },
+    {
+        "name": "steel",
+        "young_modulus": 207000.0,
+        "poisson_ratio": 0.3,
+        "density": 7.85e-9
+    },
+    {
+        "name": "steel_austenitic",
+        "young_modulus": 196000.0,
+        "poisson_ratio": 0.3,
+        "density": 7.85e-9
+    },
+    {
+        "name": "aluminum",
+        "young_modulus": 72000.0,
+        "poisson_ratio": 0.32,
+        "density": 2.8e-9
+    },
+    {
+        "name": "titanium",
+        "young_modulus": 110000.0,
+        "poisson_ratio": 0.34,
+        "density": 4.42e-9
+    },
+    {
+        "name": "phynox",
+        "young_modulus": 203400.0,
+        "shear_modulus": 77000.0,
+        "density": 8.3e-9
+    },
+    {
+	"name": "SS-316LVM",
+        "young_modulus": 187500.0,
+        "shear_modulus": 70300.0,
+        "density": 8.0e-9
+    },
+    {
+        "name": "vesselChalupnik1971",
+        "elasticity": "hyperelastic",
+        "type": "reduced polynomial",
+        "constants": [8.079804243E-02, 8.77088566, 0.0,0.0]
+    },
+    {
+        "name": "concrete",
+        "junk": ""
+    }
+]

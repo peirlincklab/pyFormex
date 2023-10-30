@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+
+usage() {
+    cat <<EOF
+
+Usage: $(basename $0) [OPTIONS]
+
+Create a docker image with pyFormex.
+
+Options:
+
+  -d, --dockerfile=DOCKERFILE : the extension of the Dockerfile to use.
+        Default is '.custom'.
+
+  -f, --from=FROM : the base OS docker image to start from. This is in docker
+        REPOSITORY:TAG format. Default is debian:latest.
+
+  -p, --pyfver=PYFVER : the version of pyFormex to be installed.
+        It should be a released version available in dist.
+
+  -t, --target=TARGET : the name of the created image. This is in docker
+        REPOSITORY:TAG format. Default is pyformex:latest.
+
+  -n, --dry-run : show what commands would be run, but do not actually
+     execute them.
+
+  -h, --help : display this help page and exit.
+
+EOF
+}
+
+DOCKERFILE=Dockerfile
+FROM=debian:latest
+PYFVER=3.2
+TARGET=pyformex:latest
+USER=demo
+OPTIONS=
+ECHO=
+
+################################
+# Process command line arguments
+#
+# Execute getopt
+ARGS=$(getopt -o "d:f:p:t:u:nh" -l "dockerfile:,from:,pyfver:,target:,user:,dry-run,help,no-cache" -n "$(basename $0)" -- "$@")
+
+#Bad arguments
+[ $? -eq 0 ] || { usage; exit 1; }
+
+eval set -- $ARGS
+
+while [ "$1" != "--" ]; do
+    case "$1" in
+	-d|--dockerfile)
+	    DOCKERFILE="$2"; shift ;;
+	-f|--from)
+	    FROM="$2"; shift ;;
+	-p|--pyfver)
+	    PYFVER="$2"; shift ;;
+	-t|--target)
+	    TARGET="$2"; shift ;;
+	-u|--user)
+	    USER="$2"; shift ;;
+	--no-cache )
+	    OPTIONS="$OPTIONS $1" ;;
+	-n|--dry-run)
+	    ECHO='echo';;
+	-h|--help)
+	    usage; exit;;
+	*) echo "Unknown option: $1" >&2; exit 1 ;;
+   esac
+   shift  # delete "$1"
+done
+shift  # delete the "--"
+
+cat <<EOF
+###### Building docker image ########
+DOCKERFILE: $DOCKERFILE
+FROM: $FROM
+PYFVER: $PYFVER
+TARGET: $TARGET
+USER: $USER
+#####################################
+EOF
+
+$ECHO ln -f ../apt_install_deps . || exit 1
+$ECHO rm homedir/pyformex*.tar.gz || exit 1
+$ECHO cp ../dist/pyformex-$PYFVER.tar.gz homedir || exit 1
+$ECHO chmod u+w homedir/* || exit 1
+$ECHO docker build --build-arg "FROM=$FROM" --build-arg "PYFVER=$PYFVER" -f $DOCKERFILE -t $TARGET $OPTIONS . || exit 1
+$ECHO rm -f apt_install_deps || exit 1
+
+# End

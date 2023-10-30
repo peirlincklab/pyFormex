@@ -1,0 +1,59 @@
+#  -*- rst -*-
+##
+##  SPDX-FileCopyrightText: © 2007-2023 Benedict Verhegghe <bverheg@gmail.com>
+##  SPDX-License-Identifier: GPL-3.0-or-later
+##
+##  This file is part of pyFormex 3.3  (Sun Mar 26 20:16:15 CEST 2023)
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: https://pyformex.org
+##  Project page: https://savannah.nongnu.org/projects/pyformex/
+##  Development: https://gitlab.com/bverheg/pyformex
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+#
+
+Installation procedure for GTS utilities
+========================================
+
+The 'TriSurface' objects in pyFormex can make use of some powerful features
+of the GTS (GNU Triangulated Surfaces) library. To interface with this library
+you need to compile and install the programs in this directory.
+
+You need to have the GTS and glib libraries installed, including the
+development files, and the pkg-config program.
+Packages for these are available for most Linux distributions.
+On Debian and like systems (Ubuntu) you just need to::
+  apt-get install libgts-dev libglib2.0-dev pkg-config
+
+To build the manpage, you also need python-docutils::
+  apt-get install python-docutils
+
+And you need git (which you probably already have if you run pyFormex
+directly from source, but might not if you installed from tarball)::
+  apt-get install git
+
+Then compile and install the programs with::
+  make
+  (sudo) make install
+
+The default install is under '/usr/local/' and requires root privileges.
+
+Afterwards, you can clean up with::
+  make clean
+
+Or do it all at once with::
+  make all

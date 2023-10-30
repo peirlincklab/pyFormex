@@ -1,0 +1,11 @@
+This directory contains the full source code of the pyFormex project.
+
+It has the following subdirectories:
+- pyformex: the source code of the pyFormex program
+- sphinx: the source code for building the documentation
+- pkg: the source code for building Debian packages
+- website: the source of the pyFormex website
+- screenshots: some (old) images
+
+The top level directory also contains some files with general information
+and some tools to help with the development.

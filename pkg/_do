@@ -1,0 +1,218 @@
+#!/bin/bash
+#
+#  Script to create Debian packages
+#
+#
+
+# get the latest version
+TARGZ=$(readlink ../dist/pyformex-latest.tar.gz)
+PYFVER=${TARGZ%.tar.gz}
+RELEASE=${PYFVER#pyformex-}
+
+TEMPLATES=debian/
+
+usage() {
+    cat << EOF
+Usage: $(basename $0) [ -r RELEASE ]  CMD...
+Where CMD is one of:
+prepare : change the changelog file to register the new package
+prepfix : change the changelog file to minor fix to a package
+  clean : clean the current unpack directories to allow new build
+ unpack : Unpacks the current .tar.gz release from dist
+  build : test-build the Debian packages for the current release
+  final : sign-build the Debian packages for the current release
+ final2 : same as final, but does not include the source. Use for fixes
+ upload : upload the Debian packages to Debian mentors
+ pkglst : create list of files in the packages
+install : install the packages
+
+
+The normal chain in creating the packages is:
+  _do clean
+  _do unpack
+  _do build
+
+To start working on a new debian version number (bug fix), do:
+  _do prepfix
+and then continue as above.
+
+To start working on a new pyFormex release, do:
+  _do prepare
+and then continue as above.
+
+When the packages are ready, create the final with:
+  _do clean
+  _do unpack
+  _do final
+
+EOF
+}
+
+setup() {
+    PYFDIR=pyformex-$RELEASE
+
+    if [ "$RELEASE" = "$VERSION" ]; then
+	reltype="official"
+	SOURCE=../dist/pyformex-$RELEASE.tar.gz
+    else
+	reltype="interim"
+	SOURCE=../dist/pyformex-$RELEASE.tar.gz
+    fi
+    echo "Working on $PYFDIR ($reltype release)"
+    ORIG=pyformex_$RELEASE.orig.tar.gz
+
+    [ -f $PYFDIR/debian/changelog ] && PKGVER=$(expr "$(head -n 1 $PYFDIR/debian/changelog)" : '.*(\(.*\)).*')
+}
+
+
+# Prepare for a new release
+prepare() {
+    dch -v $RELEASE-1
+    sed -i '0,/UNRELEASED/s//unstable/' debian/changelog
+}
+# Prepare for a package fix
+prepfix() {
+    dch -i
+    sed -i '0,/UNRELEASED/s//unstable/' debian/changelog
+}
+
+unpack() {
+    [ -d "$PYFDIR" ] && rm -rf $PYFDIR
+    tar xf $SOURCE
+    # python setup.py does not understand DESTDIR
+    # so we should not use the upstream Makefile
+    #rm -f $PYFDIR/Makefile
+    rsync $TEMPLATES $PYFDIR/debian --exclude .svn -a
+    ln -fn ${SOURCE} ${ORIG}
+    #ln -fn ${SOURCE}.asc ${ORIG}.asc
+    # For now !!!
+    #rm $PYFDIR/debian/*.doc-base
+}
+
+patch() {
+    echo "=== Patching ==="
+    echo "!!! THis should only be done once !!"
+    return
+    sed -i "s/installtype =.*/installtype = 'D'/" ${PYFDIR}/pyformex/__init__.py
+    cd PYFDIR
+    dpkg-source --commit . 000-installtype.patch
+    cd ..
+}
+
+
+
+build() {
+    (
+    rsync debian $PYFDIR -av
+    pushd $PYFDIR
+    debuild -us -uc
+    popd
+    )  | tee $PYFDIR.log
+}
+
+buildlib() {
+    pushd $PYFDIR
+    debuild -i -us -uc -B
+    popd
+}
+
+install() {
+    sudo debi pyformex_${PKGVER}_amd64.changes
+}
+
+pkglst() {
+    debc pyformex_${PKGVER}_amd64.changes > pkglst
+}
+
+final() {
+    (
+    rsync debian $PYFDIR -av
+    pushd $PYFDIR
+    debuild -sa
+    popd
+    )  | tee $PYFDIR.log
+}
+
+# This will not include the original source
+final2() {
+    pushd $PYFDIR
+    debuild
+    popd
+}
+
+# return the name of the changes file
+getchanges() {
+    PKGVER=$(expr "$(head -n 1 $PYFDIR/debian/changelog)" : '.*(\(.*\)).*')
+    echo "pyformex_${PKGVER}_amd64.changes"
+}
+
+# upload() {
+#     CHANGES=$(getchanges)
+#     echo Uploading ${CHANGES}
+#     [ -f "$CHANGES" ] && dput mentors $CHANGES
+# }
+
+REPOHOST=bumps
+REPOPATH=/srv/packages/deb/mini-dinstall
+REPO=${REPOPATH}/incoming
+uploadlocal() {
+    rsync *_$RELEASE[.-]* --exclude '*.upload' $REPO -avn
+    read -p "Do you want to upload these packages ?" ans
+    if [ "$ans" = "y" -o "$ans" = "Y" ]; then
+	rsync *_$RELEASE[.-]* --exclude '*.upload' $REPO -av
+	mini-dinstall -b
+	echo If all is ok, now do:
+	echo rsync /srv/packages/deb bumps:/srv/package/deb -av --delete
+    fi
+}
+
+clean() {
+    pushd $PYFDIR
+    dh_clean
+    popd
+}
+
+# Remove workdir
+distclean() {
+    clean
+    rm -rf $PYFDIR
+}
+
+# Remove all: workdir + packages
+mrproper() {
+    distclean
+    rm -f *_$RELEASE[.-]*
+}
+
+## This does not work yet
+
+_bump() {
+    OLDPKGVER=$(expr "$(head -n 1 $PYFDIR/debian/changelog)" : '.*(\(.*\)).*')
+    ARCHDIR=uploaded/${OLDPKGVER}
+    mkdir $ARCHDIR && mv pyformex_${PKGVER}[_.]* $ARCHDIR
+    pushd $PYFDIR
+    dch -i
+    PKGVER=$(expr "$(head -n 1 debian/changelog)" : '.*(\(.*\)).*')
+    sed -i "s|pyformex(=$OLDPKGVER)|pyformex(=$PKGVER)|" debian/control
+    popd
+    cp $PYFDIR/debian/control $PYFDIR/debian/changelog debian-ex
+}
+
+[ "$1" = "-r" ] && {
+    RELEASE="$2"
+    shift 2
+}
+VERSION=${RELEASE%%-*}
+
+# [ "$1" = "-v" ] && {
+#     VERSION="$2"
+#     shift 2
+# }
+
+setup
+[ -n "$1" ] || { echo "For help about usage: _do usage" ; exit; }
+for cmd in "$@"; do
+    $cmd
+done
+
+# End

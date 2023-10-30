@@ -1,0 +1,22 @@
+# pyFormex release version
+VERSION=3.4
+
+# version for public documentation directory
+# TODO: this should become ${VERSION} when we have the infrastructure changes
+# for more doc versions
+DOCVERSION=3.0
+
+# For an official release, the RELEASE should be equal to VERSION
+# During development RELEASE should be equal to VERSION plus a tail
+# of the form .dev[0-9]+
+# Use 'make bumprelease' to increase .dev? number AFTER creating a .tar.gz.
+# Use 'make bumpversion' to increase VERSION and set a new tail in RELEASE
+# AFTER creating (and tagging) the release.
+RELEASE=${VERSION}.dev0
+
+# Lowest accepted Python version: these two should match
+MINVERSION=0x03080000  # Minimal Python version
+TGTVERSION=0x03090000  # Targeted Python version
+
+# Requirements for NumPy version
+NUMPYVERSION='>=1.16'   # Recommended 1.19

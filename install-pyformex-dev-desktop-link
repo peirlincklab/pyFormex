@@ -1,0 +1,114 @@
+#!/bin/bash
+##
+##  This file is part of the pyFormex project.
+##  pyFormex is a tool for generating, manipulating and transforming 3D
+##  geometrical models by sequences of mathematical operations.
+##  Home page: http://pyformex.org
+##  Project page:  https://savannah.nongnu.org/projects/pyformex/
+##  Copyright (C) Benedict Verhegghe (benedict.verhegghe@ugent.be) 
+##  Distributed under the GNU General Public License version 3 or later.
+##
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program.  If not, see http://www.gnu.org/licenses/.
+##
+#
+# Install a pyformex source version in the desktop menu
+# You need to have imagemagick
+#
+
+usage() {
+  echo ""
+  echo "Usage: install-pyformex-dev-desktop-link  [ -u ] [ annotation ] [ options ]"
+  echo ""
+  echo "Installs a desktop menu item for starting pyFormex from the source tree."
+  echo "A short annotation text may be specified: it will be added on top of"
+  echo "the 'P' icon. The default is 'DEV'. A matching icon and .desktop file"
+  echo "are created in the current directory and added in the systems desktop"
+  echo "menu, usually under the section 'Other'."
+  echo "Any extra options will be added to the pyFormex command line in the"
+  echo "generated menu item."
+  echo ""
+  echo "In many desktops you can drag the menu item to the toolbar to create"
+  echo "a quickstart button."
+  echo ""
+  echo "Options: -u : Uninstall the desktop entry. The matching .desktop"
+  echo "              should still exist in your path."
+  echo "         -h : displays this help text."
+  echo ""
+} 
+
+
+UNINSTALL=
+
+[ "$1" = "-h" ] && {
+    usage
+    exit
+}
+
+[ "$1" = "-u" ] && {
+    UNINSTALL=y
+    shift
+}
+
+ANNOT="$1"
+shift
+
+[ -n "$ANNOT" ] || ANNOT="DEV"
+
+DESKTOP=pyformex-$ANNOT.desktop
+
+[ -n "$UNINSTALL" ] && {
+    echo "Uninstalling $DESKTOP"
+    xdg-desktop-icon uninstall $DESKTOP
+    xdg-desktop-menu uninstall $DESKTOP
+    exit
+}
+
+
+DEVDIR=$(dirname $0)
+cd $DEVDIR
+DEVDIR=$(pwd)
+
+if [ -z "$(type -t convert)" ]; then
+    echo "You do not have ImageMagick installed: I will use the default icon"
+    ICON=$DEVDIR/pyformex/icons/pyformex-dev.png
+else
+    # Create the icon
+    ICON=$DEVDIR/pyformex-$ANNOT.png
+    convert pyformex/icons/pyformex-64x64.png -pointsize 20 -style normal -weight bold -fill navy -gravity southeast -draw "text 2,2 \"$ANNOT\"" $ICON
+fi
+
+if [ -n "$(type -t xdg-desktop-menu)" ]; then
+
+    # Create the .desktop file
+    cat > $DESKTOP <<EOF
+[Desktop Entry]
+Type=Application
+Exec=$DEVDIR/pyformex/pyformex $@
+Icon=$ICON
+Name=pyFormex ($ANNOT)
+GenericName=pyFormex 3D Geometry Designer
+Comment=pyFormex is a program to design, manipulate and operate on 3D geometrical models.
+EOF
+
+    # Install the .desktop file on xdg compliant systems
+    echo "Installing $DESKTOP"
+    #xdg-icon-resource install --size 64 $ICON
+    xdg-desktop-icon install $DESKTOP
+    xdg-desktop-menu install $DESKTOP
+
+else
+    echo "I can not install a desktop link because your system is not xdg compliant"
+fi
+

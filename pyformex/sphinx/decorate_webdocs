@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+dir=$(dirname $0)
+for d in $@; do
+    [ -d "$d" ] && sed -i -f $dir/sidebar_decorations.sed $d/*.html
+done

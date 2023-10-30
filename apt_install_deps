@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# Install all pyFormex dependencies on a deb-like OS
+#
+DEFAULT=Debian:11
+
+usage() {
+    cat <<EOF
+Usage: $(basename $0) [TARGET [PKG...]]
+
+Installs all pyFormex dependencies on Debian/Ubuntu like systems.
+
+  TARGET: the target distribution. The default is Debian 10. Most recent
+          distributions will install fine with this option. For some
+          older distributions, the following alternative targets may be tried:
+	  Debian:9.
+	  If not specified, the distribution is probed and if known to be
+	  compatible with one of the existing targets, that target is used.
+	  Thus, e.g. Ubuntu:20.04 will use Debian:10, while Ubuntu:18.04 will
+	  use Debian:9
+
+  PKG: extra package(s) to be installed
+
+EOF
+}
+
+# Probe OS
+probe() {
+    type -f lsb_release || apt-get install -y lsb-release || {
+	>&2 echo "Can not probe distribution: will try default"
+	target="$DEFAULT"
+	return
+    }
+    distro="$(lsb_release -s -i)"
+    release="$(lsb_release -s -r)"
+    target="$distro":"$release"
+    echo "Probed OS is $target"
+}
+
+# Find equivalent
+equivalent() {
+    case $target in
+	Debian:11 | Devuan:4 | Debian:10 | Ubuntu:20.04 | Devuan:3 )
+	    target='Debian:11'
+	    ;;
+	* )
+	    echo "Nothing known about $target."
+	    echo "I will try the default."
+	    target='Debian:11'
+	    ;;
+    esac
+}
+
+# Configure for target
+config() {
+    case $target in
+	Debian:11 )
+	    bindings="python3-pyside2.qtcore python3-pyside2.qtgui \
+  	        python3-pyside2.qtwidgets python3-pyside2.qtopengl"
+	    extra="python3-pydicom python3-meshio"
+	    ;;
+    esac
+}
+
+# Execution starts here
+target=$1
+shift
+apt-get update
+
+[ -n "$target" ] || probe
+
+equivalent
+echo "Installing pyFormex dependencies for $target"
+
+config
+
+pkgs="python3 make gcc pkg-config git lsb-release unzip python3-setuptools \
+  python3-numpy python3-scipy python3-pil python3-opengl \
+  ${bindings} \
+  python3-matplotlib python3-docutils python3-sphinx \
+  python3-dev libglu1-mesa-dev libfreetype6-dev \
+  libgts-0.7-5 libgts-dev libgts-bin admesh tetgen units libdxflib-dev \
+  python3-pytest python3-git \
+  ${extra}"
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y ${pkgs} $@
+exitcode=$?
+echo ""
+if [ $exitcode -eq 0 ]; then
+    echo "Installation of dependencies finished normally."
+else
+    echo "The installation of dependencies failed."
+    echo "You may try specifying another target."
+    echo ""
+    usage
+fi
+exit $exitcode
+
+# End

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=pyformex --redirect
+Icon=pyformex-64x64.png
+Name=pyFormex
+GenericName=pyFormex 3D Geometry Manipulator
+Comment=Python framework to create, transform, manipulate and render 3D geometry

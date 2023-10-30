@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Script to clean pyFormex source tree
+# This is run when pyFormex is starting from the source, to cleanup
+# any lingering files from old versions that may hinder correct working.
+#
+echo "CLEANING pyFormex SOURCE TREE"
+pyformexdir=$(dirname $0)
+cd $pyformexdir
+pwd
+find . -name '*.pyc' -delete
+# there's no longer a danger in keeping all modules, as they have the Python
+# version embedded in their names
+# ====== REMOVED ========
+# keep_modules=
+# if [ "$1" = "--keep_modules" ]; then
+#     keep_modules="-not -name '$2'"
+# fi
+# eval "find lib -name *.so $keep_modules -delete"
+# =======================
+rm -rf legacy
+rm -f lib/drawgl*
+rm -f lib/_clust*
+rm -f plugins/saveload.py
+
+echo "CLEANING DONE"
